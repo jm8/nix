@@ -299,32 +299,32 @@ void Expr::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env
 
 void ExprInt::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 }
 
 void ExprFloat::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 }
 
 void ExprString::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 }
 
 void ExprPath::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 }
 
 void ExprVar::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     /* Check whether the variable appears in the environment.  If so,
        set its level and displacement. */
@@ -359,8 +359,8 @@ void ExprVar::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & 
 
 void ExprSelect::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     e->bindVars(es, env);
     if (def) def->bindVars(es, env);
@@ -371,8 +371,8 @@ void ExprSelect::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv>
 
 void ExprOpHasAttr::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     e->bindVars(es, env);
     for (auto & i : attrPath)
@@ -382,8 +382,8 @@ void ExprOpHasAttr::bindVars(EvalState & es, const std::shared_ptr<const StaticE
 
 void ExprAttrs::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     if (recursive) {
         auto newEnv = std::make_shared<StaticEnv>(false, env.get(), recursive ? attrs.size() : 0);
@@ -415,8 +415,8 @@ void ExprAttrs::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> 
 
 void ExprList::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     for (auto & i : elems)
         i->bindVars(es, env);
@@ -424,8 +424,8 @@ void ExprList::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> &
 
 void ExprLambda::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     auto newEnv = std::make_shared<StaticEnv>(
         false, env.get(),
@@ -451,8 +451,8 @@ void ExprLambda::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv>
 
 void ExprCall::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     fun->bindVars(es, env);
     for (auto e : args)
@@ -461,8 +461,8 @@ void ExprCall::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> &
 
 void ExprLet::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     auto newEnv = std::make_shared<StaticEnv>(false, env.get(), attrs->attrs.size());
 
@@ -480,8 +480,8 @@ void ExprLet::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & 
 
 void ExprWith::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     /* Does this `with' have an enclosing `with'?  If so, record its
        level so that `lookupVar' can look up variables in the previous
@@ -495,8 +495,8 @@ void ExprWith::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> &
             break;
         }
 
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     attrs->bindVars(es, env);
     auto newEnv = std::make_shared<StaticEnv>(true, env.get());
@@ -505,8 +505,8 @@ void ExprWith::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> &
 
 void ExprIf::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     cond->bindVars(es, env);
     then->bindVars(es, env);
@@ -515,8 +515,8 @@ void ExprIf::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & e
 
 void ExprAssert::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     cond->bindVars(es, env);
     body->bindVars(es, env);
@@ -524,16 +524,16 @@ void ExprAssert::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv>
 
 void ExprOpNot::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     e->bindVars(es, env);
 }
 
 void ExprConcatStrings::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 
     for (auto & i : *this->es)
         i.second->bindVars(es, env);
@@ -541,8 +541,8 @@ void ExprConcatStrings::bindVars(EvalState & es, const std::shared_ptr<const Sta
 
 void ExprPos::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & env)
 {
-    if (es.debugRepl)
-        es.exprEnvs.insert(std::make_pair(this, env));
+    // nix-analyzer: always update exprEnvs map to keep track of StaticEnvs
+    es.exprEnvs.insert(std::make_pair(this, env));
 }
 
 
