@@ -1085,6 +1085,12 @@ void Value::mkPath(std::string_view s)
 
 inline Value * EvalState::lookupVar(Env * env, const ExprVar & var, bool noEval)
 {
+    // nix-analyzer: throw undefined variable errors here instead of in bindVars
+    // when there is a variable that is undefined statically with no with expressions
+    if (var.level == -1) {
+        throwUndefinedVarError(var.pos, "undefined variable '%1%'", symbols[var.name], *env, const_cast<ExprVar&>(var));        
+    }
+
     for (auto l = var.level; l; --l, env = env->up) ;
 
     if (!var.fromWith) return env->values[var.displ];

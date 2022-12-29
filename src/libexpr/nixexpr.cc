@@ -348,11 +348,13 @@ void ExprVar::bindVars(EvalState & es, const std::shared_ptr<const StaticEnv> & 
     /* Otherwise, the variable must be obtained from the nearest
        enclosing `with'.  If there is no `with', then we can issue an
        "undefined variable" error now. */
-    if (withLevel == -1)
-        throw UndefinedVarError({
-            .msg = hintfmt("undefined variable '%1%'", es.symbols[name]),
-            .errPos = es.positions[pos]
-        });
+    // nix-analyzer: actually we won't
+    if (withLevel == -1) {
+        // throw UndefinedVarError({
+        //     .msg = hintfmt("undefined variable '%1%'", es.symbols[name]),
+        //     .errPos = es.positions[pos]
+        // });
+    }
     fromWith = true;
     this->level = withLevel;
 }
