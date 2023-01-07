@@ -239,8 +239,9 @@ struct ExprVar : Expr
        value is obtained by getting the attribute named `name` from
        the set stored in the environment that is `level` levels up
        from the current one.*/
-    Level level;
-    Displacement displ;
+    // nix-analyzer: make sure this is never uninitialized (could cause crash)
+    Level level = -1;
+    Displacement displ = 0;
 
     ExprVar(Symbol name) : name(name) { };
     ExprVar(const PosIdx & pos, Symbol name) : pos(pos), name(name) { };
