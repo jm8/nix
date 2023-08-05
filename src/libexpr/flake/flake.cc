@@ -88,11 +88,7 @@ static void expectType(EvalState & state, ValueType type,
             showType(type), showType(value.type()), state.positions[pos]);
 }
 
-static std::map<FlakeId, FlakeInput> parseFlakeInputs(
-    EvalState & state, Value * value, const PosIdx pos,
-    const std::optional<Path> & baseDir, InputPath lockRootPath);
-
-static FlakeInput parseFlakeInput(EvalState & state,
+FlakeInput parseFlakeInput(EvalState & state,
     const std::string & inputName, Value * value, const PosIdx pos,
     const std::optional<Path> & baseDir, InputPath lockRootPath)
 {
@@ -169,7 +165,7 @@ static FlakeInput parseFlakeInput(EvalState & state,
     return input;
 }
 
-static std::map<FlakeId, FlakeInput> parseFlakeInputs(
+std::map<FlakeId, FlakeInput> parseFlakeInputs(
     EvalState & state, Value * value, const PosIdx pos,
     const std::optional<Path> & baseDir, InputPath lockRootPath)
 {
@@ -313,20 +309,36 @@ Flake getFlake(EvalState & state, const FlakeRef & originalRef, bool allowLookup
     return getFlake(state, originalRef, allowLookup, flakeCache);
 }
 
+LockedFlake lockFlake(
+    EvalState & state,
+    const FlakeRef & topRef,
+    const LockFlags & lockFlags) {
+
+    FlakeCache flakeCache;
+
+    auto useRegistries = lockFlags.useRegistries.value_or(fetchSettings.useRegistries);
+    auto flake = getFlake(state, topRef, useRegistries, flakeCache);
+
+    auto oldLockFile = LockFile::read(
+            flake.sourceInfo->actualPath + "/" + flake.lockedRef.subdir + "/flake.lock");
+
+    lockFlake(state, topRef, flake, oldLockFile, lockFlags);
+}
+
 /* Compute an in-memory lock file for the specified top-level flake,
    and optionally write it to file, if the flake is writable. */
 LockedFlake lockFlake(
     EvalState & state,
     const FlakeRef & topRef,
-    const LockFlags & lockFlags)
-{
+    Flake & flake,
+    const LockFile & oldLockFile,
+    const LockFlags & lockFlags) {
+
     settings.requireExperimentalFeature(Xp::Flakes);
 
     FlakeCache flakeCache;
 
     auto useRegistries = lockFlags.useRegistries.value_or(fetchSettings.useRegistries);
-
-    auto flake = getFlake(state, topRef, useRegistries, flakeCache);
 
     if (lockFlags.applyNixConfig) {
         flake.config.apply();
@@ -334,10 +346,6 @@ LockedFlake lockFlake(
     }
 
     try {
-
-        // FIXME: symlink attack
-        auto oldLockFile = LockFile::read(
-            flake.sourceInfo->actualPath + "/" + flake.lockedRef.subdir + "/flake.lock");
 
         debug("old lock file: %s", oldLockFile);
 

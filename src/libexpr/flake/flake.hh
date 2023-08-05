@@ -125,10 +125,27 @@ struct LockFlags
     std::set<InputPath> inputUpdates;
 };
 
+// nix-analyzer: be able to pass flakes that are currently open in the editor
+LockedFlake lockFlake(
+    EvalState & state,
+    const FlakeRef & topRef,
+    Flake & flake,
+    const LockFile & oldLockFile,
+    const LockFlags & lockFlags
+);
+
 LockedFlake lockFlake(
     EvalState & state,
     const FlakeRef & flakeRef,
     const LockFlags & lockFlags);
+
+std::map<FlakeId, FlakeInput> parseFlakeInputs(
+    EvalState & state, Value * value, const PosIdx pos,
+    const std::optional<Path> & baseDir, InputPath lockRootPath);
+
+FlakeInput parseFlakeInput(EvalState & state,
+    const std::string & inputName, Value * value, const PosIdx pos,
+    const std::optional<Path> & baseDir, InputPath lockRootPath);
 
 void callFlake(
     EvalState & state,
